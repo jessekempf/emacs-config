@@ -8,9 +8,11 @@
 
 (require 'flycheck)
 (require 'flycheck-haskell)
+(require 'flycheck-tip)
 (add-hook 'haskell-mode-hook 'flycheck-mode)
 (add-hook 'flycheck-mode-hook 'flycheck-haskell-configure)
-
+(flycheck-tip-use-timer 'verbose)
+ 
 ;; configure completions
 (require 'company)
 (add-hook 'haskell-mode-hook 'company-mode)
@@ -26,10 +28,19 @@
       (company-complete-common)
     (indent-according-to-mode)))
 
-(eval-after-load 'haskell-mode
-  `(define-key haskell-mode-map [tab] 'complete-or-indent))
+(defun indent-or-complete ()
+  (interactive)
+  (if (looking-at "\\_>")
+      (company-complete-common)
+    (indent-according-to-mode)))
 
-;; (defadvice haskell-mode-stylish-buffer (around skip-if-flycheck-errors activate)
-  ;; (unless (flycheck-has-current-errors-p 'error)
-    ;; ad-do-it))
+;(eval-after-load 'haskell-mode
+;  `(define-key haskell-mode-map
+;     [tab] 'indent-or-complete))
+
 (setq haskell-stylish-on-save t)
+
+(add-hook 'haskell-mode-hook 'flyspell-prog-mode)
+;(add-hook 'haskell-mode-hook 'structured-haskell-mode)
+(add-hook 'haskell-mode-hook 'paredit-mode)
+
